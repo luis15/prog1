@@ -1,0 +1,21 @@
+extends ../layout
+
+block content
+    h1.
+         #{title}
+    
+    ul
+        - each message, i in messages
+            li
+                = message.name
+                = message.badge
+                = message.dob
+                = message.isloved
+                = message._id
+                form(action='/messages/#{message._id}/edit',method='post',enctype='application/x-www-form-urlencoded')
+                    input(type='hidden',value='DELETE',name='_method')
+                    button(type='submit')  Delete
+                p 
+                    a(href='/messages/#{message._id}/edit') Edit
+                p
+                    a(href='/messages/#{message._id}') Show

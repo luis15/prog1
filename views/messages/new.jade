@@ -1,0 +1,12 @@
+extends ../layout
+
+block content
+    h1.
+        #{title}
+    form#formAddmessage(name="addmessage",method="post",action="/messages")
+        p Message: 
+            input#inputName(type="name", placeholder="ex. Good Morning", name="name")
+        p DOB: 
+            input#inputDob(type="date", name="dob")
+        p
+            button#btnSubmit(type="submit") submit
