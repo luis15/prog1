@@ -1,0 +1,10 @@
+extends ../layout
+
+block content
+    h1.
+        #{title}
+    form#formAddmessage(name="addmessage",method="post",action="/users")
+        p Name: 
+            input#inputName(type="name", placeholder="ex. Braian", name="name")
+        p
+            button#btnSubmit(type="submit") submit

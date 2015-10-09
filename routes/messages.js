@@ -30,7 +30,7 @@ router.route('/')
                     html: function(){
                         res.render('messages/index', {
                               title: 'All my messages',
-                              "messages" : messages
+                              "messages" : messages,
 
                           });
                     },
@@ -46,17 +46,14 @@ router.route('/')
     .post(function(req, res) {
         // Get values from POST request. These can be done through forms or REST calls. These rely on the "name" attributes for forms
         var name = req.body.name;
-        var badge = req.body.badge;
         var dob = req.body.dob;
-        var company = req.body.company;
-        var isloved = req.body.isloved;
+        var user_id = req.body.user_id;
         //call the create function for our database
         mongoose.model('message').create({
             name : name,
-            badge : badge,
             dob : dob,
-            isloved : isloved
-        }, function (err, message) {
+            user_id : user_id
+            }, function (err, message) {
               if (err) {
                   res.send("There was a problem adding the information to the database.");
               } else {
@@ -82,7 +79,8 @@ router.route('/')
     /* GET New message page. */
   router.get('/new', function(req, res) {
       res.render('messages/new', { title: 'Add New message' });
-  });
+
+      });
 
   // route middleware to validate :id
 router.param('id', function(req, res, next, id) {
@@ -173,10 +171,8 @@ router.get('/:id/edit', function(req, res) {
 router.put('/:id/edit', function(req, res) {
     // Get our REST or form values. These rely on the "name" attributes
     var name = req.body.name;
-    var badge = req.body.badge;
     var dob = req.body.dob;
-    var company = req.body.company;
-    var isloved = req.body.isloved;
+    var user_id = req.body.user_id;
 
    //find the document by ID
         mongoose.model('message').findById(req.id, function (err, message) {
