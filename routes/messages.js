@@ -137,7 +137,8 @@ router.param('id', function(req, res, next, id) {
 
 router.route('/:id')
   .get(function(req, res) {
-    mongoose.model('message').findById(req.id, function (err, message) {
+
+    mongoose.model('message').populate('user.user_name').findById(req.id, function (err, message) {
       if (err) {
         console.log('GET Error: There was a problem retrieving: ' + err);
       } else {
@@ -148,7 +149,8 @@ router.route('/:id')
           html: function(){
               res.render('messages/show', {
                 "messagedob" : messagedob,
-                "message" : message
+                "message" : message,
+                "user_name":message.user.user_name(message._id)
               });
           },
           json: function(){
@@ -163,8 +165,6 @@ router.route('/:id')
 
       var messageQuery = mongoose.model('message').findById(req.id );
       var userQuery = mongoose.model('user').find({});
-
-
       var resources = {
         message: messageQuery.exec.bind(messageQuery),
         users: userQuery.exec.bind(userQuery)
