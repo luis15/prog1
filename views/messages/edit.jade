@@ -7,7 +7,11 @@ block content
         p Message: 
             input#inputName(type='text', value='#{message.name}', name='name')
         p DOB: 
-            input#inputDob(type='date', value='#{messagedob}', name='dob')
+            input#inputDob(type='date', value='#{message.dob}', name='dob')
+              
+        select(name = "user_id")
+          -each user, i in users
+             option(value="#{user._id}") #{user.name}
         p 
             input(type='hidden',value='PUT',name='_method')
         p 

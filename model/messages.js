@@ -1,7 +1,8 @@
-var mongoose = require('mongoose');
+var mongoose = require('mongoose'),
+Schema = mongoose.Schema
 var messageSchema = new mongoose.Schema({
   name: String,
-  user_id : String,
-  dob: { type: Date, default: Date.now },
-});
+ user_id: {type: Schema.Types.ObjectId, ref: 'User'},
+    dob: { type: Date, default: Date.now },
+  });
 mongoose.model('message', messageSchema);

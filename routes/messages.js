@@ -3,7 +3,8 @@ var express = require('express'),
     mongoose = require('mongoose'), //mongo connection
     bodyParser = require('body-parser'), //parses information from POST
     methodOverride = require('method-override'); //used to manipulate POST
-    router.use(bodyParser.urlencoded({ extended: true }))
+    router.use(bodyParser.urlencoded({ extended: true }));
+    async = require('async');
 
 router.use(methodOverride(function(req, res){
       if (req.body && typeof req.body === 'object' && '_method' in req.body) {
@@ -52,12 +53,14 @@ router.route('/')
         mongoose.model('message').create({
             name : name,
             dob : dob,
-            user_id : user_id
+            user_id : user_id,
+
             }, function (err, message) {
               if (err) {
                   res.send("There was a problem adding the information to the database.");
               } else {
                   //message has been created
+                  console.log(req.body);
                   console.log('POST creating new message: ' + message);
                   res.format({
                       //HTML response will set the location and redirect back to the home page. You could also create a 'success' page if that's your thing
@@ -76,11 +79,30 @@ router.route('/')
         })
     });
 
-    /* GET New message page. */
-  router.get('/new', function(req, res) {
-      res.render('messages/new', { title: 'Add New message' });
 
-      });
+
+  router.get('/new', function(req, res) {
+    mongoose.model('user').find({}, function (err, users) {
+          if (err) {
+              return console.error(err);
+          } else {
+              //respond to both HTML and JSON. JSON responses require 'Accept: application/json;' in the Request Header
+              res.format({
+                  //HTML response will render the index.jade file in the views/messages folder. We are also setting "messages" to be an accessible variable in our jade view
+                html: function(){
+                    res.render('messages/new', {
+                          title: 'New Message',
+                          "users" : users,
+                      });
+                },
+                //JSON response will show all messages in JSON format
+                json: function(){
+                    res.json(users);
+                }
+            });
+          }
+    });
+  });
 
   // route middleware to validate :id
 router.param('id', function(req, res, next, id) {
@@ -136,9 +158,28 @@ router.route('/:id')
       }
     });
   });
+  router.get('/:id/edit',function(req, res) {
+    //mongoose.model('Message').findById(req.id).populate('user_id').exec(function(error, results) {});
 
+      var messageQuery = mongoose.model('message').findById(req.id );
+      var userQuery = mongoose.model('user').find({});
+
+
+      var resources = {
+        message: messageQuery.exec.bind(messageQuery),
+        users: userQuery.exec.bind(userQuery)
+      };
+      async.parallel(resources, function (error, results) {
+        if (error) {
+          res.status(500).send(error);
+          return;
+        }
+        console.log(results);
+        res.render('messages/edit', results);
+      });
+    });
   //GET the individual message by Mongo ID
-router.get('/:id/edit', function(req, res) {
+/*router.get('/:id/edit', function(req, res) {
     //search for the message within Mongo
     mongoose.model('message').findById(req.id, function (err, message) {
         if (err) {
@@ -155,8 +196,8 @@ router.get('/:id/edit', function(req, res) {
                        res.render('messages/edit', {
                           title: 'message' + message._id,
                         "messagedob" : messagedob,
-                          "message" : message
-                      });
+                          "message" : message,
+                          });
                  },
                  //JSON response will return the JSON output
                 json: function(){
@@ -164,9 +205,33 @@ router.get('/:id/edit', function(req, res) {
                  }
             });
         }
+
     });
 });
 
+router.get('/:id/edit', function(req, res) {
+   mongoose.model('user').find({}, function (err, users) {
+         if (err) {
+             return console.error(err);
+         } else {
+             //respond to both HTML and JSON. JSON responses require 'Accept: application/json;' in the Request Header
+             res.format({
+                 //HTML response will render the index.jade file in the views/messages folder. We are also setting "messages" to be an accessible variable in our jade view
+               html: function(){
+                   res.render('messages/edit', {
+                         title: 'New Message',
+                         "users" : users,
+                     });
+               },
+               //JSON response will show all messages in JSON format
+               json: function(){
+                   res.json(users);
+               }
+           });
+         }
+   });
+ });
+*/
 //PUT to update a message by ID
 router.put('/:id/edit', function(req, res) {
     // Get our REST or form values. These rely on the "name" attributes
@@ -178,10 +243,9 @@ router.put('/:id/edit', function(req, res) {
         mongoose.model('message').findById(req.id, function (err, message) {
             //update it
             message.update({
-                name : name,
-                badge : badge,
-                dob : dob,
-                isloved : isloved
+              name : name,
+              dob : dob,
+              user_id : user_id
             }, function (err, messageID) {
               if (err) {
                   res.send("There was a problem updating the information to the database: " + err);

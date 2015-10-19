@@ -10,8 +10,8 @@ block content
         p DOB: 
             input#inputDob(type="date", name="dob")
         
-        select
-            -each user, i in users
+        select(name = "user_id")
+          -each user, i in users
               option(value="#{user._id}") #{user.name}
               
                                       

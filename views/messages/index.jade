@@ -3,12 +3,15 @@ extends ../layout
 block content
     h1.
          #{title}
+         
     
     ul
         - each message, i in messages
             li
-                = message.name
-                = message.dob
+              = message.name
+              = message.dob
+              = message.user_id
+              
                   form(action='/messages/#{message._id}/edit',method='post',enctype='application/x-www-form-urlencoded')
                     input(type='hidden',value='DELETE',name='_method')
                     button(type='submit')  Delete

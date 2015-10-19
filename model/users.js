@@ -4,4 +4,3 @@ var userSchema = new mongoose.Schema({
   created:{ type: Date, default: Date.now }
 });
 mongoose.model('user', userSchema);
-mongoose.model('message', userSchema);
