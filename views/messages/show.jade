@@ -6,4 +6,31 @@ block content
     p Message ID:   #{message._id}
     p Name: #{message.name}
     p DOB: #{messagedob}
-    p User ID: #{message.user_name}
+    p User_Id: #{message.user_id._id}
+    p User_Name: #{message.user_id.name}
+
+    h1.
+      All Comments 
+    ul
+      - each comment, i in comments
+            li
+                = comment.content
+                = comment.dob
+                = comment.user_id.name
+      
+    h1.
+        New Comment
+    
+    form#formAddcomment(name="addcomment", method="post", action="/comments")
+            p Message: 
+                input#inputName(type="message", placeholder="ex. Good Morning", name="content")
+            p DOB: 
+                input#inputDob(type="date", name="dob")
+            
+                input#inputDob(type="hidden", name="message_id", value = "#{message._id}")
+            select(name = "user_id")
+              -each user, i in users
+                  option(value="#{user._id}") #{user.name}
+                  
+                                          
+            button#btnSubmit(type="submit") submit

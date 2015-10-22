@@ -4,21 +4,18 @@ block content
     h1.
          #{title}
          
-    
+  
     ul
-      
         - each message, i in messages
-            li
+          li
               = message.name
-            li
               = message.dob
-            li
-              = message.user_name
+              = message.user_id.name
               
-                  form(action='/messages/#{message._id}/edit',method='post',enctype='application/x-www-form-urlencoded')
-                    input(type='hidden',value='DELETE',name='_method')
-                    button(type='submit')  Delete
-                p 
+          form(action='/messages/#{message._id}/edit',method='post',enctype='application/x-www-form-urlencoded')      
+          input(type='hidden',value='DELETE',name='_method')
+          button(type='submit')  Delete
+          p 
                     a(href='/messages/#{message._id}/edit') Edit
-                p
+          p
                     a(href='/messages/#{message._id}') Show
